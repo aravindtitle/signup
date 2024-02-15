@@ -1,7 +1,7 @@
 import classes from "./AuthForm.module.css";
-import { Puff } from "react-loader-spinner";
 import { useState } from "react";
 import axios from "axios";
+import Loader, { Puff } from "react-loader-spinner";
 
 const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -20,7 +20,7 @@ const AuthForm = () => {
 
     const email = event.target.email.value;
     const password = event.target.password.value;
-    const apiKey = "YOUR_API_KEY"; // Replace with your Firebase API key
+    const apiKey = "AIzaSyBcXjluDcYtbgf0o_kQFK191r5n3BlAwak";
 
     let url;
     if (isLogin) {
@@ -38,10 +38,17 @@ const AuthForm = () => {
 
       console.log(response.data);
 
-      // Show success message to the user or redirect to another page
+      // Check if login failed
+      if (response.data.error) {
+        setError(response.data.error.message);
+      } else {
+        // Login successful, log the JWT token (idToken)
+        console.log("JWT Token:", response.data.idToken);
+        // You can redirect the user to another page or show a success message
+      }
     } catch (error) {
-      console.error(error.response.data.error.message);
-      setError(error.response.data.error.message);
+      console.error(error);
+      setError("Authentication failed. Please try again.");
     }
 
     setIsLoading(false);
