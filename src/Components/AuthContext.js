@@ -1,11 +1,13 @@
 // AuthContext.js
 
 import React, { createContext, useState, useContext, useEffect } from "react";
+import { useHistory } from "react-router-dom"; // Import useHistory hook for redirecting
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(sessionStorage.getItem("token"));
+  const history = useHistory(); // Get history object for redirection
 
   useEffect(() => {
     sessionStorage.setItem("token", token);
@@ -18,6 +20,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setToken(null);
     sessionStorage.removeItem("token");
+    history.push("/auth"); // Redirect to login page after logout
   };
 
   return (

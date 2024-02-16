@@ -1,9 +1,17 @@
+// index.js or App.js
 import React from "react";
-import { createRoot } from "react-dom/client";
-
-import { BrowserRouter as Router } from "react-router-dom"; // or HashRouter
+import ReactDOM from "react-dom";
+import { BrowserRouter } from "react-router-dom";
+import App from "./App";
 import { AuthProvider } from "./Components/AuthContext";
 
-import App from "./App";
-
-createRoot(document.getElementById("root")).render(<App />);
+ReactDOM.render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </BrowserRouter>
+  </React.StrictMode>,
+  document.getElementById("root")
+);

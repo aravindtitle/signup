@@ -13,7 +13,7 @@ const ChangePasswordPage = () => {
     // Send POST request to Firebase Auth API to change password
     try {
       const response = await axios.post(
-        "https://identitytoolkit.googleapis.com/v1/accounts:update",
+        "https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyDll9GLS_DagY9AKtLdE1skrN0MHQgsw5A",
         {
           idToken: "user_id_token", // Replace 'user_id_token' with the actual user's ID token
           password: newPassword,
