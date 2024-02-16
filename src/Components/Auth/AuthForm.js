@@ -1,12 +1,19 @@
 import classes from "./AuthForm.module.css";
 import { useState } from "react";
-import axios from "axios";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import Loader, { Puff } from "react-loader-spinner";
+import app from "../firebaseConfig";
 
 const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const auth = getAuth(app);
 
   const switchAuthModeHandler = () => {
     setIsLogin((prevState) => !prevState);
@@ -20,63 +27,42 @@ const AuthForm = () => {
 
     const email = event.target.email.value;
     const password = event.target.password.value;
-    const apiKey = "AIzaSyBcXjluDcYtbgf0o_kQFK191r5n3BlAwak";
-
-    let url;
-    if (isLogin) {
-      url = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${apiKey}`;
-    } else {
-      url = `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${apiKey}`;
-    }
 
     try {
-      const response = await axios.post(url, {
-        email,
-        password,
-        returnSecureToken: true,
-      });
-
-      console.log(response.data);
-
-      // Check if login failed
-      if (response.data.error) {
-        setError(response.data.error.message);
+      if (isLogin) {
+        await signInWithEmailAndPassword(auth, email, password);
+        console.log("Signed in successfully");
       } else {
-        // Login successful, log the JWT token (idToken)
-        console.log("JWT Token:", response.data.idToken);
-        // You can redirect the user to another page or show a success message
+        await createUserWithEmailAndPassword(auth, email, password);
+        console.log("Signed up successfully");
       }
     } catch (error) {
       console.error(error);
-      setError("Authentication failed. Please try again.");
+      setError(error.message);
     }
 
     setIsLoading(false);
   };
 
   return (
-    <section className={classes.auth}>
+    <section>
       <h1>{isLogin ? "Login" : "Sign Up"}</h1>
       <form onSubmit={authHandler}>
-        <div className={classes.control}>
+        <div>
           <label htmlFor="email">Your Email</label>
           <input type="email" id="email" required />
         </div>
-        <div className={classes.control}>
+        <div>
           <label htmlFor="password">Your Password</label>
           <input type="password" id="password" required />
         </div>
-        <div className={classes.actions}>
+        <div>
           {isLoading ? (
             <Puff type="Puff" color="#00BFFF" height={50} width={50} />
           ) : (
             <button type="submit">{isLogin ? "Login" : "Sign Up"}</button>
           )}
-          <button
-            type="button"
-            className={classes.toggle}
-            onClick={switchAuthModeHandler}
-          >
+          <button type="button" onClick={switchAuthModeHandler}>
             {isLogin ? "Create new account" : "Login with existing account"}
           </button>
         </div>
