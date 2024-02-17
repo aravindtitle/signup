@@ -6,9 +6,15 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(
     () => localStorage.getItem("token") || null
   );
+  const [logoutTimer, setLogoutTimer] = useState(null);
 
   useEffect(() => {
-    localStorage.setItem("token", token);
+    if (token) {
+      const timer = setTimeout(logout, 5 * 60 * 1000); // 5 minutes in milliseconds
+      setLogoutTimer(timer);
+    } else {
+      clearTimeout(logoutTimer);
+    }
   }, [token]);
 
   const login = (token) => {
@@ -18,10 +24,17 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setToken(null);
     localStorage.removeItem("token");
+    clearTimeout(logoutTimer);
+  };
+
+  const resetLogoutTimer = () => {
+    clearTimeout(logoutTimer);
+    const timer = setTimeout(logout, 5 * 60 * 1000); // 5 minutes in milliseconds
+    setLogoutTimer(timer);
   };
 
   return (
-    <AuthContext.Provider value={{ token, login, logout }}>
+    <AuthContext.Provider value={{ token, login, logout, resetLogoutTimer }}>
       {children}
     </AuthContext.Provider>
   );
